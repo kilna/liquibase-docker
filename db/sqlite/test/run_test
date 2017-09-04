@@ -1,0 +1,14 @@
+#!/bin/bash
+
+set -e -o pipefail
+cd /workspace/test
+
+echo "Adding sqlite"
+apk add sqlite
+
+echo "Creating sqlite db"
+sqlite3 liquibase.db .databases
+
+echo "Applying changelog"
+liquibase updateTestingRollback
+

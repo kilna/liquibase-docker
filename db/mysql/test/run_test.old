@@ -1,0 +1,54 @@
+#!/bin/bash
+
+set -e -o pipefail
+cd /workspace/test
+
+echo "Installing mysql"
+apk add --update sudo mysql mysql-client
+# mysql_install_db --user=mysql --rpm >/dev/null
+
+echo "Initializing mysql"
+mkdir -p /run/mysqld
+chown -R mysql:mysql /run/mysqld /var/lib/mysql
+mysql_install_db --user=mysql --verbose=1 --basedir=/usr --datadir=/var/lib/mysql --rpm > /dev/null
+sed -i '/skip-external-locking/a log_error = \/var\/lib\/mysql\/error.log' /etc/mysql/my.cnf
+sed -i '/skip-external-locking/a general_log = ON' /etc/mysql/my.cnf
+sed -i '/skip-external-locking/a general_log_file = \/var\/lib\/mysql\/query.log' /etc/mysql/my.cnf
+cat <<EOF >/tmp/init.sql
+    DROP DATABASE IF EXISTS test;
+    CREATE DATABASE liquibase;
+    USE mysql;
+    DELETE FROM user;
+    FLUSH PRIVILEGES;
+    GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY "password" WITH GRANT OPTION;
+    GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION;
+    UPDATE user SET password=PASSWORD("") WHERE user='root' AND host='localhost';
+    GRANT ALL PRIVILEGES ON *.* TO 'liquibase'@'%' IDENTIFIED BY "liquibase" WITH GRANT OPTION;
+    GRANT ALL PRIVILEGES ON *.* TO 'liquibase'@'localhost' WITH GRANT OPTION;
+    UPDATE user SET password=PASSWORD("") WHERE user='liquibase' AND host='localhost';
+    FLUSH PRIVILEGES;
+EOF
+set +e
+mysqld --user=root --bootstrap --verbose=0 --log-error=/tmp/mysql_init.err --init-file=/tmp/init.sql &
+echo "$?"
+sleep 10
+echo "______LOG_______"
+cat /tmp/mysql_init.err
+echo "^^^^^^LOG^^^^^^^"
+set -e
+
+echo "Starting mysql"
+mysqld --user=root --bind-address=0.0.0.0 &
+pid="$!"
+
+echo "Applying changelog"
+set +e
+liquibase updateTestingRollback
+ser -e
+echo "______LOG_______"
+cat /tmp/mysql_init.err
+echo "^^^^^^LOG^^^^^^^"
+
+echo "Stopping mysql"
+kill -s TERM $pid && wait $pid
+
