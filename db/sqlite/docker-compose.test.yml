@@ -1,5 +1,5 @@
 sut:
   build: test
-  dockerfile: Dockerfile
+  dockerfile: ../Dockerfile
   command: run_tests
 
