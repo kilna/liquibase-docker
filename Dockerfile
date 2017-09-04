@@ -18,5 +18,6 @@ RUN apk --update add curl ca-certificates;\
 
 WORKDIR /workspace
 ONBUILD COPY . /workspace
+ONBUILD RUN [[ -d test ]] && mv test /opt/liquibase_test
 ONBUILD VOLUME /workspace
 

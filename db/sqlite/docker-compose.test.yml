@@ -1,5 +1,5 @@
 sut:
-  build: test
-  dockerfile: ../Dockerfile
+  build: .
+  workdir: /opt/liquibase_test
   command: run_tests
 
