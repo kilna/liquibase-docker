@@ -15,8 +15,7 @@ Replacement of ${...} values is disabled for liquibase.properties since it
 needs environment variables which are handled by the database driver
 specific docker images.
 EOF
-echo ">>>"`grep -F '${' liquibase.properties 2>/dev/null`"<<<"
-if [[ `grep -F '${' liquibase.properties 2>/dev/null` != '' ]]; then
+elif [[ `grep -F '${' liquibase.properties 2>/dev/null` != '' ]]; then
   echo "Replacing variables in liquibase.properties" >&2
   vars=( URL DATABASE HOST PORT USERNAME PASSWORD CHANGELOG LOGLEVEL )
   err=0
