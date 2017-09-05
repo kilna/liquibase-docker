@@ -22,11 +22,9 @@ RUN set -e -o pipefail;\
     ln -s /opt/liquibase/liquibase /usr/local/bin/liquibase;\
     mkdir /workspace /opt/jdbc
 
-COPY entrypoint.sh /
+COPY liquibase.properties /workspace/liquibase.properties
 WORKDIR /workspace
-
-ONBUILD COPY liquibase.properties /workspace/liquibase.properties
 ONBUILD VOLUME /workspace
-
+COPY entrypoint.sh /
 ENTRYPOINT [ "/entrypoint.sh" ]
 
