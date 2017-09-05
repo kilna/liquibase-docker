@@ -12,7 +12,7 @@ ENV LIQUIBASE_DATABASE=${LIQUIBASE_DATABASE:-liquibase}\
 
 COPY entrypoint.sh /
 RUN set -e -o pipefail;\
-    chmod +x /entrypoint;\
+    chmod +x /entrypoint.sh;\
     apk --no-cache add curl ca-certificates;\ 
     tarfile=liquibase-${liquibase_version}-bin.tar.gz;\
     mkdir /opt/liquibase;\
