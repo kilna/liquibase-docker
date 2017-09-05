@@ -28,7 +28,8 @@ elif [[ `grep -F '${' liquibase.properties 2>/dev/null` != '' ]]; then
         err=1
       else
         echo "Replacing \${$var} with env var LIQUIBASE_$var value '$val'" >&2
-        sed -i 's/\${'${var}'}/'${val}'/g' liquibase.properties
+        val_esc=${val/$/\\$}
+        sed -i 's/\${'${var}'}/'${val_esc}'/g' liquibase.properties
       fi
     fi
   done
@@ -37,6 +38,7 @@ elif [[ `grep -F '${' liquibase.properties 2>/dev/null` != '' ]]; then
       echo "Unrecognized replacement \${VARIABLE} in liquibase.properties" >&2
     fi
   fi
+  unset vars err val var lvar
 fi
 
 exec "$@"
