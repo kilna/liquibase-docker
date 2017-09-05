@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e -o pipefail
+set -o pipefail
 
 if [[ `ls -A /opt/jdbc/*.jar 2>/dev/null` == '' ]]; then
   >&2 echo <<'EOF' 
@@ -15,30 +15,47 @@ Replacement of ${...} values is disabled for liquibase.properties since it
 needs environment variables which are handled by the database driver
 specific docker images.
 EOF
-elif [[ `grep -F '${' liquibase.properties 2>/dev/null` != '' ]]; then
-  echo "Replacing variables in liquibase.properties" >&2
-  vars=( URL DATABASE HOST PORT USERNAME PASSWORD CHANGELOG LOGLEVEL )
-  err=0
-  for var in "${vars[@]}"; do
-    lvar="LIQUIBASE_$var"
-    eval "val=\${$lvar:-NULL}"
-    if [[ `grep -F '${'$var'}' liquibase.properties` != '' ]]; then
-      if [[ "$val" == 'NULL' ]]; then
-        echo "\${$var} in liquibase.properties, but env var LIQUIBASE_$var was not set" >&2
+else
+  contents=$(<liquibase.properties)
+  contents_orig="$contents"
+  if [[ "$contents" ==  *'${'*'}'* ]]; then
+    echo "Replacing variables in liquibase.properties" >&2
+    vars=( URL DATABASE HOST PORT USERNAME PASSWORD CHANGELOG LOGLEVEL CLASSPATH DRIVER )
+    err=0
+    for var in "${vars[@]}"; do
+      lvar="LIQUIBASE_$var"
+      eval "val=\${$lvar:-NULL}"
+      varmatch='${'$var'}'
+      if [[ "$contents" == *"$varmatch"* ]]; then
+        if [[ "$val" == 'NULL' ]]; then
+          echo "\${$var} in liquibase.properties, but env var LIQUIBASE_$var was not set" >&2
+          err=1
+        else
+          echo "Replacing \${$var} with env var LIQUIBASE_$var value '$val'" >&2
+          contents=${contents//$varmatch/$val}
+          #val_esc=${val//$/\\$}
+          #val_esc=${val//{/\\{}
+          #val_esc=${val_esc//\}/\\\}}
+          #echo "ESCAPED: $val_esc"
+          #sed -i 's/\${'${var}'}/'${val_esc}'/g' liquibase.properties
+        fi
+      fi
+    done
+    if [[ "$err" -ne 0 ]]; then
+      if [[ "$contents" ==  *'${'*'}'* ]]; then
+        echo "Unrecognized replacement variable \${...} in liquibase.properties" >&2
         err=1
-      else
-        echo "Replacing \${$var} with env var LIQUIBASE_$var value '$val'" >&2
-        val_esc=${val/$/\\$}
-        sed -i 's/\${'${var}'}/'${val_esc}'/g' liquibase.properties
       fi
     fi
-  done
-  if [[ "$err" == 0 ]]; then
-    if [[ `grep -F '${' liquibase.properties` != '' ]]; then
-      echo "Unrecognized replacement \${VARIABLE} in liquibase.properties" >&2
+    if [[ "$err" -ne 0 ]]; then
+      echo "liquibase.properties contents before processing:" >&2
+      echo "$contents_orig" >&2
+      echo "liquibase.properties contents after processing:" >&2
+      echo "$contents" >&2
     fi
+    echo "$contents" > liquibase.properties
   fi
-  unset vars err val var lvar
+  unset contents contents_orig vars err val var varmatch lvar
 fi
 
 exec "$@"

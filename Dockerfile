@@ -22,7 +22,8 @@ RUN set -e -o pipefail;\
     rm ${tarfile};\
     chmod +x liquibase;\
     ln -s /opt/liquibase/liquibase /usr/local/bin/liquibase;\
-    mkdir /workspace /opt/jdbc
+    mkdir /workspace /opt/jdbc;\
+    set | grep -F LIQUIBASE_
 
 COPY liquibase.properties /workspace/liquibase.properties
 WORKDIR /workspace
