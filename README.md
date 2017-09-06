@@ -14,7 +14,7 @@ A lightweight Docker for running Liquibase.
 
 # Liquibase Docker images with drivers
 
-*Liquibase by itself cannot connect to a database.* To do actual database work, you will need a JDBC driver... *you probably want one of these other images where I've bundled a database driver alongside liquibase*:
+**Liquibase by itself cannot connect to a database.** To do actual database work, you will need a JDBC driver. **You probably want one of these other images where I've bundled a database driver alongside Liquibase**:
 
 * [DockerHub](https://hub.docker.com/r/kilna/liquibase-postgres/) - [GitHub](https://github.com/kilna/liquibase-postgres-docker) - liquibase-postgres
 * [DockerHub](https://hub.docker.com/r/kilna/liquibase-mysql/) - [GitHub](https://github.com/kilna/liquibase-mysql-docker) - liquibase-mysql
