@@ -34,7 +34,7 @@ TO-DO: finish section
 
 # Environment Variables and liquibase.properties
 
-This docker image has a working Liquibase executable in the path, and an entrypoint which auto-generates a liquibase.properties file.
+This docker image has a working Liquibase executable in the path, and an entrypoint which auto-generates a [liquibase.properties](http://www.liquibase.org/documentation/liquibase.properties.html) file.
 
 In order to create the liquibase.properties file, it uses the follow environment variables when the image is started with 'docker run':
 
