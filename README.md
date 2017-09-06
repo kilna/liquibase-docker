@@ -16,17 +16,18 @@ A lightweight Docker for running Liquibase.
 
 Liquibase by itself cannot connect to a database. To do actual database work, you will need a JDBC driver... fortunately I've bundled some common database drivers for you in these docker images:
 
-* liquibase-postgres [DockerHub](https://hub.docker.com/r/kilna/liquibase-postgres/) [GitHub](https://github.com/kilna/liquibase-postgres-docker)
-* liquibase-mysql [DockerHub](https://hub.docker.com/r/kilna/liquibase-mysql/) [GitHub](https://github.com/kilna/liquibase-mysql-docker)
-* liquibase-mariadb [DockerHub](https://hub.docker.com/r/kilna/liquibase-mariadb/) [GitHub](https://github.com/kilna/liquibase-mariadb-docker)
-* liquibase-sqlite [DockerHub](https://hub.docker.com/r/kilna/liquibase-sqlite/) [GitHub](https://github.com/kilna/liquibase-sqlite-docker)
+* [DockerHub](https://hub.docker.com/r/kilna/liquibase-postgres/) - [GitHub](https://github.com/kilna/liquibase-postgres-docker) - liquibase-postgres
+* [DockerHub](https://hub.docker.com/r/kilna/liquibase-mysql/) - [GitHub](https://github.com/kilna/liquibase-mysql-docker) - liquibase-mysql
+* [DockerHub](https://hub.docker.com/r/kilna/liquibase-mariadb/) - [GitHub](https://github.com/kilna/liquibase-mariadb-docker) - liquibase-mariadb
+* [DockerHub](https://hub.docker.com/r/kilna/liquibase-sqlite/) - [GitHub](https://github.com/kilna/liquibase-sqlite-docker) - liquibase-sqlite
 
 # Usage
 
 If you'd like to apply a changelog to a MySQL database, fire up a new container named _liquibase_:
 
 ```
-docker run -e LIQUIBASE_HOST=database.server -e LIQUIBASE_USERNAME=user -e LIQUIBASE_PASSWORD=pass -e LIQUIBASE_DATABASE=dbname --name liquibase -d kilna/liquibase-mysql
+$ docker run -e LIQUIBASE_HOST=database.server -e LIQUIBASE_USERNAME=user -e LIQUIBASE_PASSWORD=pass \
+    -e LIQUIBASE_DATABASE=dbname --name liquibase -d kilna/liquibase-mysql
 ```
 
 TO-DO: finish section
