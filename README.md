@@ -18,11 +18,12 @@ A lightweight Docker for running Liquibase.
 
 **You probably want one of these other images where I've bundled a database driver alongside Liquibase**:
 
-|---|---|---|
-| **liquibase-postgres** | [DockerHub](https://hub.docker.com/r/kilna/liquibase-postgres/) | [GitHub](https://github.com/kilna/liquibase-postgres-docker) |
-| **liquibase-mysql** | [DockerHub](https://hub.docker.com/r/kilna/liquibase-mysql/) | [GitHub](https://github.com/kilna/liquibase-mysql-docker) |
-| **liquibase-mariadb** | [DockerHub](https://hub.docker.com/r/kilna/liquibase-mariadb/) | [GitHub](https://github.com/kilna/liquibase-mariadb-docker) |
-| **liquibase-sqlite** | [DockerHub](https://hub.docker.com/r/kilna/liquibase-sqlite/) | [GitHub](https://github.com/kilna/liquibase-sqlite-docker) |
+| DockerHub Image | GitHub Source |
+|---|---|
+| [kilna/**liquibase-postgres**](https://hub.docker.com/r/kilna/liquibase-postgres/) | [liquibase-postgres-docker](https://github.com/kilna/liquibase-postgres-docker) |
+| [kilna/**liquibase-mysql**](https://hub.docker.com/r/kilna/liquibase-mysql/) | [liquibase-mysql-docker](https://github.com/kilna/liquibase-mysql-docker) |
+| [kilna/**liquibase-mariadb**](https://hub.docker.com/r/kilna/liquibase-mariadb/) | [liquibase-mariadb-docker](https://github.com/kilna/liquibase-mariadb-docker) |
+| [kilna/**liquibase-sqlite**](https://hub.docker.com/r/kilna/liquibase-sqlite/) | [liquibase-sqlite-docker](https://github.com/kilna/liquibase-sqlite-docker) |
 
 # Usage
 
