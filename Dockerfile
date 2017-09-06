@@ -1,4 +1,5 @@
 FROM anapsix/alpine-java
+LABEL maintainer="Kilna kilna@kilna.com"
 
 ARG liquibase_version=3.5.3
 ARG liquibase_download_url=https://github.com/liquibase/liquibase/releases/download/liquibase-parent-${liquibase_version}
