@@ -21,7 +21,9 @@ A lightweight Docker for running Liquibase.
 | **liquibase-postgres** | [DockerHub](https://hub.docker.com/r/kilna/liquibase-postgres/) | [GitHub](https://github.com/kilna/liquibase-postgres-docker) |
 |---|---|---|
 | **liquibase-mysql** | [DockerHub](https://hub.docker.com/r/kilna/liquibase-mysql/) | [GitHub](https://github.com/kilna/liquibase-mysql-docker) |
+|---|---|---|
 | **liquibase-mariadb** | [DockerHub](https://hub.docker.com/r/kilna/liquibase-mariadb/) | [GitHub](https://github.com/kilna/liquibase-mariadb-docker) |
+|---|---|---|
 | **liquibase-sqlite** | [DockerHub](https://hub.docker.com/r/kilna/liquibase-sqlite/) | [GitHub](https://github.com/kilna/liquibase-sqlite-docker) |
 
 # Usage
