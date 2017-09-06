@@ -14,9 +14,9 @@ A lightweight Docker for running Liquibase.
 
 # Liquibase Docker images with drivers
 
-**Liquibase by itself cannot connect to a database.** To do actual database work, you will need a JDBC driver.
+Liquibase by itself cannot connect to a database. To do actual database work, you will need a JDBC driver.
 
-**You probably want one of these other images where I've bundled a database driver alongside Liquibase**:
+<span style="color: red">**You probably want one of these other images where I've bundled a database driver alongside Liquibase**</span>:
 
 | DockerHub Image | GitHub Source |
 |---|---|
