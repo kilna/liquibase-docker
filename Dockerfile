@@ -30,4 +30,4 @@ COPY liquibase.properties /workspace/liquibase.properties
 WORKDIR /workspace
 ONBUILD VOLUME /workspace
 ENTRYPOINT [ "/entrypoint.sh" ]
-
+CMD ['/bin/sh', '-i']
