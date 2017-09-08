@@ -1,5 +1,5 @@
 #!/bin/bash
-#set -e -o pipefail
+set -e -o pipefail
 
 function usage() {
   [[ -z "$1" ]] || echo "$1" >&2
@@ -12,13 +12,13 @@ USAGE: varsubst [OPTIONS] filename"
 
 OPTIONS:
 
-  --passes N        Number of times to re-process the file (this allows vars
-   -p N             to reference other vars in their values)
-
   --prefix STRING   Prefix to limit replacements, if set to 'DB_' then only
    -p STRING        environment variables beginning with DB_ will be
                     replaced.  In the example DB_ case, ${USER} will be
                     substituted with the environment variable DB_USER.
+
+  --passes N        Number of times to re-process the file (this allows vars
+   -p N             to reference other vars in their values). Default is 2
 
   --strict          Fail if there are variables specified in the file which
    -s               are not set in the environment. Default behavior is to
@@ -54,12 +54,6 @@ while [[ "${1:-NULL}" != 'NULL' ]]; do
                   fi ;;
   esac
 done
-
-#echo "passes:  $passes"
-#echo "prefix:  $prefix"
-#echo "verbose: $verbose"
-#echo "strict:  $strict"
-#echo "file:    $file"
 
 if [[ -z "$file" ]]; then usage 'No file provided' 253; fi
 if [[ ! -e "$file" ]]; then echo "File $file not found" >&2; exit 1; fi
@@ -109,10 +103,15 @@ if [[ "$strict" -ne 0 && "$err" -eq 0 && "$contents" ==  *'${'*'}'* ]]; then
 fi
 
 if [[ "$verbose" -gt 1 ]]; then
+  echo >&2
   echo "$file contents before varsubst processing:" >&2
+  echo >&2
   echo "$contents_orig" | sed 's/^/    /g' >&2
+  echo >&2
   echo "$file contents after varsubst processing:" >&2
+  echo >&2
   echo "$contents" | sed 's/^/    /g' >&2
+  echo >&2
 fi
 
 [[ ! $strict || "$err" -eq 0 ]] && echo "$contents" >$file

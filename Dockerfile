@@ -11,9 +11,10 @@ ENV LIQUIBASE_DATABASE=${LIQUIBASE_DATABASE:-liquibase}\
     LIQUIBASE_CHANGELOG=${LIQUIBASE_CHANGELOG:-changelog.xml}\
     LIQUIBASE_LOGLEVEL=${LIQUIBASE_LOGLEVEL:-info}
 
-COPY entrypoint.sh /
+COPY bin/* /usr/local/bin/
+COPY test/ /opt/test_liquibase/
 RUN set -e -o pipefail;\
-    chmod +x /entrypoint.sh;\
+    chmod +x /usr/local/bin/* /opt/test_liquibase/run_test.sh;\
     apk --no-cache add curl ca-certificates;\ 
     tarfile=liquibase-${liquibase_version}-bin.tar.gz;\
     mkdir /opt/liquibase;\
@@ -29,5 +30,5 @@ RUN set -e -o pipefail;\
 COPY liquibase.properties /workspace/liquibase.properties
 WORKDIR /workspace
 ONBUILD VOLUME /workspace
-ENTRYPOINT [ "/entrypoint.sh" ]
+ENTRYPOINT [ "/usr/local/bin/entrypoint.sh" ]
 CMD ['/bin/sh', '-i']

@@ -1,0 +1,8 @@
+version: '3'
+services:
+  sut:
+    build: .
+    command: /opt/test_liquibase/run_test.sh --help
+    environment:
+      LIQUIBASE_DISABLE_DRIVER_CHECK: 'yes'
+      LIQUIBASE_DEBUG: 'yes'
