@@ -5,9 +5,9 @@
 [![](https://img.shields.io/docker/stars/kilna/liquibase.svg?style=plastic)](https://hub.docker.com/r/kilna/liquibase/)
 [![](https://img.shields.io/badge/docker_build-automated-blue.svg?style=plastic)](https://cloud.docker.com/swarm/kilna/repository/docker/kilna/liquibase/builds)
 
-**A lightweight Docker for running [Liquibase](https://www.liquibase.org)** - DockerHub: [liquibase](https://hub.docker.com/r/kilna/liquibase/)
+**A lightweight Docker for running [Liquibase](https://www.liquibase.org)**
 
-GitHub: [liquibase-docker](https://github.com/kilna/liquibase-docker)
+DockerHub: [liquibase](https://hub.docker.com/r/kilna/liquibase/) - GitHub: [liquibase-docker](https://github.com/kilna/liquibase-docker)
 
 # Liquibase Docker images with drivers
 
