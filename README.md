@@ -4,7 +4,6 @@
 [![](https://img.shields.io/docker/pulls/kilna/liquibase.svg?style=plastic)](https://hub.docker.com/r/kilna/liquibase/)
 [![](https://img.shields.io/docker/stars/kilna/liquibase.svg?style=plastic)](https://hub.docker.com/r/kilna/liquibase/)
 [![](https://img.shields.io/badge/docker_build-automated-blue.svg?style=plastic)](https://cloud.docker.com/swarm/kilna/repository/docker/kilna/liquibase/builds)
-[![](https://img.shields.io/badge/python-2.7,_3.6-blue.svg?style=plastic)](https://github.com/kilna/liquibase-docker/)
 
 **A lightweight Docker for running [Liquibase](https://www.liquibase.org)** - DockerHub: [liquibase](https://hub.docker.com/r/kilna/liquibase/) - GitHub: [liquibase-docker](https://github.com/kilna/liquibase-docker)
 
