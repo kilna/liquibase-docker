@@ -1,5 +1,4 @@
 #!/bin/bash
-set -e -o pipefail
 
 function usage() {
   [[ -z "$1" ]] || echo "$1" >&2
@@ -58,7 +57,9 @@ done
 if [[ -z "$file" ]]; then usage 'No file provided' 253; fi
 if [[ ! -e "$file" ]]; then echo "File $file not found" >&2; exit 1; fi
 
-function say() { (( "$verbose" )) && echo "$1"; }
+err=0
+function say() { [[ "$verbose" -gt 0 ]] && echo "$1" >&2; }
+function error() { echo "$1" >&2; err=$((err+1)); }
 
 contents=$(cat $file)
 contents_orig="$contents"
@@ -69,7 +70,6 @@ else
   IFS=$'\n' vars=( $( printenv | cut -d = -f 1 | grep -e '^'$prefix ) )
 fi
 
-err=0
 for (( pass=1; $pass <= $passes; pass++ )); do
   if [[ "$contents" !=  *'${'*'}'* ]]; then
     [[ "$pass" -eq 1 ]] && say "No variables to replace in file $file"
@@ -83,8 +83,7 @@ for (( pass=1; $pass <= $passes; pass++ )); do
     if [[ "$contents" == *"$replace_var"* ]]; then
       if [[ "$val" == 'NULL' ]]; then
         if [[ "$strict" -ne 0 ]]; then
-          echo "$replace_var in $file, but environment variable $env_var was not set" >&2
-          err=$(($err+1))
+          error "$replace_var in $file, but environment variable $env_var was not set"
         else
           say "Replacing $replace_var with blank (environment variable $env_var was not set)"
           contents=${contents//$repace_var/}
@@ -97,21 +96,21 @@ for (( pass=1; $pass <= $passes; pass++ )); do
   done
 done
 
-if [[ "$strict" -ne 0 && "$err" -eq 0 && "$contents" ==  *'${'*'}'* ]]; then
-  echo 'Unrecognized replacement variable ${...} in '"$file" >&2
-  err=$(($err+1))
+if [[ "$err" -eq 0 && "$contents" ==  *'${'*'}'* ]]; then
+  lines=$( echo "$contents" | grep -F '${' )
+  error "Unrecognized replacement variable(s) in $file:"$'\n'"$lines"
 fi
 
 if [[ "$verbose" -gt 1 || "$err" -gt 0 && "$verbose" -gt 0 ]]; then
-  echo >&2
-  echo "$file contents before varsubst processing:" >&2
-  echo >&2
-  echo "$contents_orig" | sed 's/^/    /g' >&2
-  echo >&2
-  echo "$file contents after varsubst processing:" >&2
-  echo >&2
-  echo "$contents" | sed 's/^/    /g' >&2
-  echo >&2
+  say
+  say "$file contents before varsubst processing:"
+  say
+  say "$contents_orig"
+  say
+  say "$file contents after varsubst processing:"
+  say
+  say "$contents"
+  say
 fi
 
 [[ ! $strict || "$err" -eq 0 ]] && echo "$contents" >$file
