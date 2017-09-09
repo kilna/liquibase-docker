@@ -1,0 +1,119 @@
+#!/bin/bash
+set -e -o pipefail
+
+function usage() {
+  [[ -z "$1" ]] || echo "$1" >&2
+  local exit_code=0
+  [[ -z "$2" ]] || exit_code="$2"
+  cat <<EOF
+USAGE: varsubst [OPTIONS] filename"
+
+  Replaces any ${VAR} in a file with the environment variable VAR.
+
+OPTIONS:
+
+  --prefix STRING   Prefix to limit replacements, if set to 'DB_' then only
+   -x STRING        environment variables beginning with DB_ will be
+                    replaced.  In the example DB_ case, ${USER} will be
+                    substituted with the environment variable DB_USER.
+
+  --passes N        Number of times to re-process the file (this allows vars
+   -p N             to reference other vars in their values). Default is 2
+
+  --strict          Fail if there are variables specified in the file which
+   -s               are not set in the environment. Default behavior is to
+                    replace with a blank string.
+
+  --verbose         Verbose mode, describe all replacements
+   -v
+
+  --help            Show usage information
+   -h
+
+EOF
+  exit $exit_code
+}
+
+export passes=2
+export file=''
+export verbose=0
+export strict=0
+export prefix=''
+
+while [[ "${1:-NULL}" != 'NULL' ]]; do
+  case "$1" in
+    -p|--passes)  passes="$2"; shift; shift ;;
+    -x|--prefix)  prefix="$2"; shift; shift ;;
+    -v|--verbose) verbose=$(($verbose+1)); shift ;;
+    -s|--strict)  strict=1; shift ;;
+    -h|--help)    usage ;;
+    *)            if [[ -z "$file" && ! "$1" =~ '^\-' ]]; then
+                    file="$1"; shift
+                  else
+                    usage "Unrecognized parameter $1" 254
+                  fi ;;
+  esac
+done
+
+if [[ -z "$file" ]]; then usage 'No file provided' 253; fi
+if [[ ! -e "$file" ]]; then echo "File $file not found" >&2; exit 1; fi
+
+function say() { (( "$verbose" )) && echo "$1"; }
+
+contents=$(cat $file)
+contents_orig="$contents"
+
+if [[ -z "$prefix" ]]; then
+  IFS=$'\n' vars=( $( printenv | cut -d = -f 1 ) )
+else
+  IFS=$'\n' vars=( $( printenv | cut -d = -f 1 | grep -e '^'$prefix ) )
+fi
+
+err=0
+for (( pass=1; $pass <= $passes; pass++ )); do
+  if [[ "$contents" !=  *'${'*'}'* ]]; then
+    [[ "$pass" -eq 1 ]] && say "No variables to replace in file $file"
+    break
+  fi
+  say "Replacing variables in $file (pass $pass)"
+  for env_var in "${vars[@]}"; do
+    replace_var='${'"$env_var"'}'
+    [[ ! -z "$prefix" ]] && replace_var='${'$( echo "$env_var" | sed "s/^$prefix//" )'}'
+    eval "val=\${$env_var:-NULL}"
+    if [[ "$contents" == *"$replace_var"* ]]; then
+      if [[ "$val" == 'NULL' ]]; then
+        if [[ "$strict" -ne 0 ]]; then
+          echo "$replace_var in $file, but environment variable $env_var was not set" >&2
+          err=$(($err+1))
+        else
+          say "Replacing $replace_var with blank (environment variable $env_var was not set)"
+          contents=${contents//$repace_var/}
+        fi
+      else
+        say "Replacing $replace_var with environment variable $env_var value '$val'"
+        contents=${contents//$replace_var/$val}
+      fi
+    fi
+  done
+done
+
+if [[ "$strict" -ne 0 && "$err" -eq 0 && "$contents" ==  *'${'*'}'* ]]; then
+  echo 'Unrecognized replacement variable ${...} in '"$file" >&2
+  err=$(($err+1))
+fi
+
+if [[ "$verbose" -gt 1 || "$err" -gt 0 && "$verbose" -gt 0 ]]; then
+  echo >&2
+  echo "$file contents before varsubst processing:" >&2
+  echo >&2
+  echo "$contents_orig" | sed 's/^/    /g' >&2
+  echo >&2
+  echo "$file contents after varsubst processing:" >&2
+  echo >&2
+  echo "$contents" | sed 's/^/    /g' >&2
+  echo >&2
+fi
+
+[[ ! $strict || "$err" -eq 0 ]] && echo "$contents" >$file
+exit $err
+
