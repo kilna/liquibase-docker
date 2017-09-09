@@ -1,11 +1,13 @@
 #!/bin/bash
 set -e -o pipefail
 
-if [[ "${LIQUIBASE_DEBUG^^}" =~ '^[1YT]' ]]; then
+is_true() { [[ "${1^^}" =~ ^(1|T|TRUE|Y|YES)$ ]]; }
+
+if is_true "${LIQUIBASE_DEBUG}"; then
   set | grep LIQUIBASE_ >&2
 fi
 
-if [[ ! "${LIQUIBASE_DISABLE_DRIVER_CHECK}" == 'yes' ]]; then
+if ! is_true "${LIQUIBASE_DISABLE_DRIVER_CHECK}"; then
   if [[ `ls -A /opt/jdbc/*.jar 2>/dev/null` == '' ]]; then
     >&2 cat <<'EOF' 
 You appear to be running the liquibase docker image without any drivers
@@ -25,8 +27,8 @@ EOF
   fi
 fi
 
-if [[ ! "${LIQUIBASE_DISABLE_INTERPOLATION}" == 'yes' ]]; then
-  /usr/local/bin/varsubst --prefix LIQUIBASE_ --strict liquibase.properties
+if ! is_true "${LIQUIBASE_DISABLE_INTERPOLATION}"; then
+  varsubst -x LIQUIBASE_ -s -v liquibase.properties
 fi
 
 exec "$@"

@@ -13,7 +13,7 @@ USAGE: varsubst [OPTIONS] filename"
 OPTIONS:
 
   --prefix STRING   Prefix to limit replacements, if set to 'DB_' then only
-   -p STRING        environment variables beginning with DB_ will be
+   -x STRING        environment variables beginning with DB_ will be
                     replaced.  In the example DB_ case, ${USER} will be
                     substituted with the environment variable DB_USER.
 
@@ -70,7 +70,7 @@ else
 fi
 
 err=0
-for pass in {1..$passes}; do
+for (( pass=1; $pass <= $passes; pass++ )); do
   if [[ "$contents" !=  *'${'*'}'* ]]; then
     [[ "$pass" -eq 1 ]] && say "No variables to replace in file $file"
     break
@@ -98,11 +98,11 @@ for pass in {1..$passes}; do
 done
 
 if [[ "$strict" -ne 0 && "$err" -eq 0 && "$contents" ==  *'${'*'}'* ]]; then
-  echo 'Unrecognized replacement variable ${...} in '"$file"
+  echo 'Unrecognized replacement variable ${...} in '"$file" >&2
   err=$(($err+1))
 fi
 
-if [[ "$verbose" -gt 1 ]]; then
+if [[ "$verbose" -gt 1 || "$err" -gt 0 && "$verbose" -gt 0 ]]; then
   echo >&2
   echo "$file contents before varsubst processing:" >&2
   echo >&2
