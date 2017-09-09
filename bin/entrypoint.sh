@@ -28,7 +28,11 @@ EOF
 fi
 
 if ! is_true "${LIQUIBASE_DISABLE_INTERPOLATION}"; then
-  varsubst -x LIQUIBASE_ -s -v liquibase.properties
+  opts=''
+  is_true "${LIQUIBASE_DEBUG}" && opts='-v'
+  is_true "${LIQUIBASE_TRACE}" && opts='-v -v'
+  varsubst -x LIQUIBASE_ -s $opts liquibase.properties
+  unset opts
 fi
 
 exec "$@"

@@ -3,17 +3,17 @@ set -e -o pipefail
 
 echo "Verifying error when running without driver"
 unset LIQUIBASE_DISABLE_DRIVER_CHECK
-if [[ ! `/usr/local/bin/entrypoint.sh /bin/true 2>&1` =~ ^'You appear' ]]; then
+if [[ ! `entrypoint.sh /bin/true 2>&1` == 'You appear'* ]]; then
   echo 'No error returned when attempting to run entrypoint.sh with no drivers' >&2
-  exit 1
+  exit 199
 fi
 
 echo "Verifying error when interpolating with incomplete environment"
 export LIQUIBASE_DISABLE_DRIVER_CHECK=yes
 unset LIQUIBASE_DISABLE_INTERPOLATION
-if [[ ! `/usr/local/bin/entrypoint.sh /bin/true 2>&1` =~ Unrecognized ]]; then
+if [[ ! `entrypoint.sh /bin/true 2>&1` == *'Unrecognized'* ]]; then
   echo 'No error returned when attempting to run entrypoint.sh with incomplete environment' >&2
-  exit 1
+  exit 198
 fi
 unset LIQUIBASE_DISABLE_DRIVER_CHECK
 
