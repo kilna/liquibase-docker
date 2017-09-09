@@ -1,4 +1,4 @@
-FROM anapsix/alpine-java
+FROM anapsix/alpine-java:8
 LABEL maintainer="Kilna kilna@kilna.com"
 
 ARG liquibase_version=3.5.3
