@@ -1,8 +1,8 @@
 FROM anapsix/alpine-java:8
 LABEL maintainer="Kilna kilna@kilna.com"
 
-ARG liquibase_version=3.5.3
-ARG liquibase_download_url=https://github.com/liquibase/liquibase/releases/download/liquibase-parent-${liquibase_version}
+ARG liquibase_version=3.8.8
+ARG liquibase_download_url=https://github.com/liquibase/liquibase/releases/download/v${liquibase_version}
 
 ENV LIQUIBASE_DATABASE=${LIQUIBASE_DATABASE:-liquibase}\
     LIQUIBASE_USERNAME=${LIQUIBASE_USERNAME:-liquibase}\
@@ -15,8 +15,9 @@ COPY bin/* /usr/local/bin/
 COPY test/ /opt/test_liquibase/
 RUN set -e -o pipefail;\
     chmod +x /usr/local/bin/* /opt/test_liquibase/run_test.sh;\
+    chmod +x /usr/local/bin/entrypoint.sh;\
     apk --no-cache add curl ca-certificates;\ 
-    tarfile=liquibase-${liquibase_version}-bin.tar.gz;\
+    tarfile=liquibase-${liquibase_version}.tar.gz;\
     mkdir /opt/liquibase;\
     cd /opt/liquibase;\
     curl -SOLs ${liquibase_download_url}/${tarfile};\
