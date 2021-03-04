@@ -60,7 +60,7 @@ appropriate to your database like so... where _/local/path/to/changelog/_ is the
 
 ```
 $ docker run -e LIQUIBASE_HOST=database.server -e LIQUIBASE_USERNAME=user -e LIQUIBASE_PASSWORD=pass \
-    -e LIQUIBASE_DATABASE=dbname -v /local/path/to/changelog/:/workspace/ kilna/liquibase-mysql \
+    -e LIQUIBASE_DATABASE=dbname -v /local/path/to/changelog/:/workspace/ jminning/liquibase-mysql \
     liquibase updateTestingRollback
 ```
 
